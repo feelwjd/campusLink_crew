@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -62,11 +63,6 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'environment': 'campusLink_crew.jinja2.environment',
-            'extensions': [
-                'jinja2.ext.do',
-                'jinja2.ext.loopcontrols',
-                'jdj_tags.extensions.DjangoCompat',
-            ],
         },
     },
     {
@@ -93,11 +89,11 @@ WSGI_APPLICATION = 'campusLink_crew.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'campus_link',
-        'USER': 'campus.user',
-        'PASSWORD': 'campususer123',
-        'HOST': 'campuslink-db-1.cfg4okws29wk.ap-northeast-2.rds.amazonaws.com',
-        'PORT': '3306',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
 

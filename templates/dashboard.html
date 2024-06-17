@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>Agent Dashboard</title>
+</head>
+<body>
+<h1>Agent Dashboard</h1>
+<ul>
+    {% for agent in agents %}
+        <li>
+            <a href='/update/{{ agent.id }}/'>{{ agent.name }}</a> - {{ agent.role }} - {{ agent.status }}
+            <button onclick="viewLogs({{ agent.id }})">View Logs</button>
+        </li>
+    {% endfor %}
+</ul>
+
+<div id="logs" style="display:none;">
+    <h2>Logs</h2>
+    <pre id="log-content"></pre>
+</div>
+
+<script>
+    function viewLogs(agentId) {
+        fetch(`/logs/${agentId}/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('log-content').innerText = data.logs.join('\n');
+                document.getElementById('logs').style.display = 'block';
+            });
+    }
+</script>
+</body>
+</html>

@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crew.apps.CrewConfig',
+    'agent_management',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +56,16 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'campusLink_crew.urls'
 
 TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2'
+        ,
+        'DIRS': [BASE_DIR / 'templates']
+        ,
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'environment': 'campusLink_crew.jinja2.environment',
+        },
+    },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
@@ -76,8 +89,12 @@ WSGI_APPLICATION = 'campusLink_crew.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
 

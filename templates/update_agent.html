@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>Update Agent - {{ agent.name }}</title>
+</head>
+<body>
+<h1>Update Agent - {{ agent.name }}</h1>
+<form method="post">
+{#    {% csrf_token %}#}
+    <textarea name="status" rows="4" cols="50">{{ agent.status }}</textarea><br>
+    <button type="submit">Update</button>
+</form>
+</body>
+</html>

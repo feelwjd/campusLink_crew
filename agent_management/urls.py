@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import dashboard, update_agent, get_logs
+from .views import dashboard, assign_task, update_task
 
 urlpatterns = [
     path('', dashboard, name='dashboard'),
-    path('update/<int:agent_id>/', update_agent, name='update_agent'),
-    path('logs/<int:agent_id>/', get_logs, name='get_logs'),
+    path('assign/<int:agent_id>/', assign_task, name='assign_task'),
+    path('update/<int:task_id>/', update_task, name='update_task'),
 ]

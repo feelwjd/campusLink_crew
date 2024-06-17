@@ -1,33 +1,82 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    <title>Agent Dashboard</title>
+    <meta charset="UTF-8">
+    <title>Agent Management Dashboard</title>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        function assignTask(agentId) {
+            fetch(`/agent_management/assign/${agentId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        location.reload();
+                    }
+                });
+        }
+
+        function updateTask(taskId) {
+            window.location.href = `/agent_management/update/${taskId}/`;
+        }
+
+        //const host = window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+        const host = 'http://localhost:8000';
+        const agentSocket = new WebSocket('ws://' + host + '/ws/agent_management/');
+
+        agentSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log(data.message);
+            // 필요에 따라 DOM을 업데이트하는 로직을 추가하세요.
+        };
+
+        agentSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+    </script>
 </head>
 <body>
-<h1>Agent Dashboard</h1>
-<ul>
+<h1>Agent Management Dashboard</h1>
+<h2>Agents</h2>
+<ul id="agent-list">
     {% for agent in agents %}
         <li>
-            <a href='/update/{{ agent.id }}/'>{{ agent.name }}</a> - {{ agent.role }} - {{ agent.status }}
-            <button onclick="viewLogs({{ agent.id }})">View Logs</button>
+            {{ agent.name }} - {{ agent.role }} - {{ agent.status }}
+            <button onclick="assignTask({{ agent.id }})">Assign Task</button>
         </li>
     {% endfor %}
 </ul>
-
-<div id="logs" style="display:none;">
-    <h2>Logs</h2>
-    <pre id="log-content"></pre>
-</div>
-
-<script>
-    function viewLogs(agentId) {
-        fetch(`/logs/${agentId}/`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('log-content').innerText = data.logs.join('\n');
-                document.getElementById('logs').style.display = 'block';
-            });
-    }
-</script>
+<h2>Tasks</h2>
+<ul id="task-list">
+    {% for task in tasks %}
+        <li>
+            {{ task.name }} - {{ task.status }}
+            {% if task.status == 'in_progress' %}
+                <button onclick="updateTask({{ task.id }})">Update Task</button>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
 </body>
 </html>

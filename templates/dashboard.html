@@ -41,8 +41,7 @@
             window.location.href = `/agent_management/update/${taskId}/`;
         }
 
-        //const host = window.location.hostname + (window.location.port ? ':' + window.location.port : '');
-        const host = 'http://localhost:8000';
+        const host = window.location.hostname + (window.location.port ? ':' + window.location.port : '');
         const agentSocket = new WebSocket('ws://' + host + '/ws/agent_management/');
 
         agentSocket.onmessage = function(e) {
@@ -71,7 +70,7 @@
 <ul id="task-list">
     {% for task in tasks %}
         <li>
-            {{ task.name }} - {{ task.status }}
+            {{ task.description }} - {{ task.status }}
             {% if task.status == 'in_progress' %}
                 <button onclick="updateTask({{ task.id }})">Update Task</button>
             {% endif %}

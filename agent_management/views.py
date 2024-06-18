@@ -1,10 +1,7 @@
-# agent_management/views.py
-
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-
 from .models import Agent, Task
+from .crew_agent import kickoff_all_processes
 
 
 def dashboard(request):
@@ -13,7 +10,6 @@ def dashboard(request):
     return render(request, 'dashboard.html', {'agents': agents, 'tasks': tasks})
 
 
-@csrf_exempt
 def assign_task(request, agent_id):
     if request.method == 'POST':
         agent = get_object_or_404(Agent, id=agent_id)
@@ -28,7 +24,6 @@ def assign_task(request, agent_id):
     return JsonResponse({'status': 'failed'})
 
 
-@csrf_exempt
 def update_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     if request.method == 'POST':
@@ -37,3 +32,8 @@ def update_task(request, task_id):
         task.save()
         return JsonResponse({'status': 'success'})
     return render(request, 'update_task.html', {'task': task})
+
+
+def kickoff_process(request):
+    kickoff_all_processes()
+    return JsonResponse({'status': 'success'})
